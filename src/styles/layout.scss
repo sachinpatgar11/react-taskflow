@@ -1,0 +1,269 @@
+@use "./variables" as *;
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: $sidebar-width;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: $surface;
+  border-right: 1px solid $border;
+  padding: 26px 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.7px;
+}
+
+.brand-icon {
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: $primary;
+  border-radius: 11px;
+}
+
+.workspace-label {
+  margin: 42px 10px 13px;
+  color: #a1a4b2;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.2px;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  color: $text-secondary;
+  font-weight: 550;
+  border-radius: $radius-sm;
+  transition: 0.2s ease;
+
+  &:hover {
+    color: $primary;
+    background: #f5f4ff;
+  }
+
+  &.active {
+    color: $primary;
+    background: #efedff;
+    font-weight: 650;
+  }
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  display: grid;
+  gap: 7px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 17px 5px 0;
+  margin-top: 12px;
+  border-top: 1px solid $border;
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong {
+    font-size: 12px;
+  }
+
+  span {
+    margin-top: 4px;
+    font-size: 11px;
+    color: $text-secondary;
+  }
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: #e8e5ff;
+  color: $primary;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+  margin-left: $sidebar-width;
+}
+
+.topbar {
+  height: $header-height;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  padding: 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.breadcrumb {
+  color: #a1a4b2;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-search {
+  height: 38px;
+  width: 240px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-secondary;
+  background: #f8f8fb;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+  }
+
+  kbd {
+    white-space: nowrap;
+    font-size: 10px;
+    color: $text-secondary;
+  }
+}
+
+.icon-button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: white;
+  color: $text-secondary;
+}
+
+.create-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: $radius-sm;
+  background: $primary;
+  color: white;
+  font-weight: 600;
+
+  &:hover {
+    background: $primary-dark;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.page-content {
+  padding: 34px 36px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 76px;
+    padding-inline: 10px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .brand > span,
+  .workspace-label,
+  .nav-link span,
+  .user-profile > div:last-child {
+    display: none;
+  }
+
+  .nav-link {
+    justify-content: center;
+  }
+
+  .main-area {
+    margin-left: 76px;
+  }
+
+  .user-profile {
+    justify-content: center;
+  }
+
+  .topbar {
+    padding-inline: 20px;
+  }
+
+  .page-content {
+    padding: 26px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    height: auto;
+    min-height: $header-height;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 14px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .header-search {
+    flex: 1;
+    width: auto;
+  }
+
+  .create-button span {
+    display: none;
+  }
+}
