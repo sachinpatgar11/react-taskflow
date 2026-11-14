@@ -1,0 +1,102 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "name": "Website Redesign",
+      "key": "WEB",
+      "description": "Redesign the company website with a modern responsive experience.",
+      "status": "active",
+      "color": "#6366f1",
+      "ownerId": "1",
+      "progress": 65,
+      "createdAt": "2026-10-01"
+    },
+    {
+      "id": "2",
+      "name": "Mobile Application",
+      "key": "APP",
+      "description": "Build a cross-platform mobile application.",
+      "status": "active",
+      "color": "#0d9488",
+      "ownerId": "2",
+      "progress": 35,
+      "createdAt": "2026-10-10"
+    },
+    {
+      "id": "3",
+      "name": "Design System",
+      "key": "DS",
+      "description": "Create reusable design components and guidelines.",
+      "status": "completed",
+      "color": "#d97706",
+      "ownerId": "1",
+      "progress": 100,
+      "createdAt": "2026-09-15"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "Alex Morgan",
+      "email": "alex@example.com",
+      "role": "admin",
+      "avatar": "AM"
+    },
+    {
+      "id": "2",
+      "name": "Sarah Wilson",
+      "email": "sarah@example.com",
+      "role": "manager",
+      "avatar": "SW"
+    },
+    {
+      "id": "3",
+      "name": "David Lee",
+      "email": "david@example.com",
+      "role": "member",
+      "avatar": "DL"
+    }
+  ],
+  "issues": [
+    {
+      "id": "1",
+      "title": "Create responsive navigation",
+      "description": "Implement responsive navigation for desktop and mobile.",
+      "projectId": "1",
+      "assigneeId": "1",
+      "status": "in-progress",
+      "priority": "high",
+      "createdAt": "2026-11-01"
+    },
+    {
+      "id": "2",
+      "title": "Fix login validation",
+      "description": "Improve client-side validation for login form.",
+      "projectId": "2",
+      "assigneeId": "2",
+      "status": "todo",
+      "priority": "critical",
+      "createdAt": "2026-11-03"
+    },
+    {
+      "id": "3",
+      "title": "Create button components",
+      "description": "Build reusable button variants for the design system.",
+      "projectId": "3",
+      "assigneeId": "3",
+      "status": "done",
+      "priority": "medium",
+      "createdAt": "2026-10-20"
+    },
+    {
+      "id": "4",
+      "title": "Optimize dashboard performance",
+      "description": "Review rendering and optimize expensive components.",
+      "projectId": "1",
+      "assigneeId": "3",
+      "status": "review",
+      "priority": "medium",
+      "createdAt": "2026-11-05"
+    }
+  ]
+}
