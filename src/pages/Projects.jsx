@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { fetchProjects } from "../features/projects/projectSlice";
 import {
   selectProjects,
@@ -98,29 +99,33 @@ function Projects() {
                 </div>
               </div>
 
-              <h3>{project.name}</h3>
-              <p>{project.description}</p>
-
-              <div className="progress-info">
-                <span>Progress</span>
-                <strong style={{ width: `${project.progress ?? 0}%` }}>
-                  {project.progress ?? 0}%
-                </strong>
-              </div>
-
-              <div
-                className="progress-track"
-                role="progressbar"
-                aria-label={`${project.name} progress`}
-                aria-valuenow={project.progress}
-                aria-valuemin="0"
-                aria-valuemax="100"
+              <Link
+                to={`/projects/${project.id}`}
+                className="project-card-details-link"
+                aria-label={`View details for ${project.name}`}
               >
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
+
+                <div className="progress-info">
+                  <span>Progress</span>
+                  <strong>{project.progress ?? 0}%</strong>
+                </div>
+
                 <div
-                  className="progress-fill"
-                  style={{ width: `${project.progress}%` }}
-                />
-              </div>
+                  className="progress-track"
+                  role="progressbar"
+                  aria-label={`${project.name} progress`}
+                  aria-valuenow={project.progress ?? 0}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${project.progress ?? 0}%` }}
+                  />
+                </div>
+              </Link>
             </article>
           ))}
         </div>

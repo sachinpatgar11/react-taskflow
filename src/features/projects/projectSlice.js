@@ -4,6 +4,7 @@ import {
   createProject as createProjectApi,
   updateProject as updateProjectApi,
   deleteProject as deleteProjectApi,
+  getProjectById,
 } from "../../services/projectService";
 
 export const fetchProjects = createAsyncThunk(
@@ -59,6 +60,19 @@ export const deleteProject = createAsyncThunk(
   },
 );
 
+export const fetchProjectById = createAsyncThunk(
+  "projects/fetchProjectById",
+  async (id, { rejectWithValue }) => {
+    try {
+      return await getProjectById(id);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch project details.",
+      );
+    }
+  },
+);
+
 const projectSlice = createSlice({
   name: "projects",
 
@@ -72,6 +86,10 @@ const projectSlice = createSlice({
     updateError: null,
     deleting: false,
     deleteError: null,
+    selectedProject: null,
+    detailsLoading: false,
+    detailsError: null,
+    detailsRequestId: null,
   },
 
   reducers: {},
@@ -139,6 +157,42 @@ const projectSlice = createSlice({
         state.deleting = false;
         state.deleteError =
           action.payload || action.error.message || "Failed to delete project.";
+      })
+      .addCase(fetchProjectById.pending, (state, action) => {
+        state.detailsLoading = true;
+        state.detailsError = null;
+        state.selectedProject = null;
+        state.detailsRequestId = action.meta.requestId;
+      })
+
+      .addCase(fetchProjectById.fulfilled, (state, action) => {
+        // Ignore responses from older requests.
+        if (state.detailsRequestId !== action.meta.requestId) {
+          return;
+        }
+
+        state.detailsLoading = false;
+        state.detailsError = null;
+        state.selectedProject = action.payload;
+        state.detailsRequestId = null;
+      })
+
+      .addCase(fetchProjectById.rejected, (state, action) => {
+        // Ignore responses from older requests.
+        if (state.detailsRequestId !== action.meta.requestId) {
+          return;
+        }
+
+        state.detailsLoading = false;
+
+        // An intentional abort is not an API error.
+        state.detailsError = action.meta.aborted
+          ? null
+          : action.payload ||
+            action.error.message ||
+            "Failed to fetch project details.";
+
+        state.detailsRequestId = null;
       });
   },
 });
