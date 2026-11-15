@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { fetchProjects } from "../features/projects/projectSlice";
 import {
   selectProjects,
@@ -9,6 +9,7 @@ import {
 } from "../features/projects/projectSelectors";
 import CreateProjectModal from "../components/project/CreateProjectModal";
 import EditProjectModal from "../components/project/EditProjectModal";
+import DeleteProjectModal from "../components/project/DeleteProjectModal";
 
 function Projects() {
   const dispatch = useDispatch();
@@ -19,9 +20,14 @@ function Projects() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [projectToDelete, setProjectToDelete] = useState(null);
 
   const handleEditProject = (project) => {
     setSelectedProject(project);
+  };
+
+  const handleDeleteProject = (project) => {
+    setProjectToDelete(project);
   };
 
   useEffect(() => {
@@ -79,6 +85,16 @@ function Projects() {
                       <Pencil size={16} />
                     </button>
                   )}
+
+                  <button
+                    type="button"
+                    className="project-delete-button"
+                    onClick={() => handleDeleteProject(project)}
+                    aria-label={`Delete ${project.name}`}
+                    title="Delete project"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
 
@@ -134,6 +150,12 @@ function Projects() {
         isOpen={Boolean(selectedProject)}
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
+      />
+
+      <DeleteProjectModal
+        isOpen={Boolean(projectToDelete)}
+        project={projectToDelete}
+        onClose={() => setProjectToDelete(null)}
       />
     </section>
   );
