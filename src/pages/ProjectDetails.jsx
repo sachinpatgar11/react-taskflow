@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, FolderKanban } from "lucide-react";
+import { ArrowLeft, FolderKanban, Users, Crown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+
 import { fetchProjectById } from "../features/projects/projectSlice";
+import { fetchUsers } from "../features/users/userSlice";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -14,6 +16,10 @@ function ProjectDetails() {
 
   const error = useSelector((state) => state.projects.detailsError);
 
+  const users = useSelector((state) => state.users.items);
+  const usersLoading = useSelector((state) => state.users.loading);
+  const usersError = useSelector((state) => state.users.error);
+
   useEffect(() => {
     const request = dispatch(fetchProjectById(projectId));
 
@@ -22,7 +28,23 @@ function ProjectDetails() {
     };
   }, [dispatch, projectId]);
 
-  if (loading) {
+  useEffect(() => {
+    if (users.length === 0 && !usersLoading) {
+      dispatch(fetchUsers());
+    }
+  }, [dispatch, users.length, usersLoading]);
+
+  const owner = users.find(
+    (user) => String(user.id) === String(project?.ownerId),
+  );
+
+  const members = (project?.memberIds || [])
+    .map((memberId) =>
+      users.find((user) => String(user.id) === String(memberId)),
+    )
+    .filter(Boolean);
+
+  if (loading || (!project && !error)) {
     return (
       <section className="project-details-page">
         <p role="status">Loading project details...</p>
@@ -118,6 +140,85 @@ function ProjectDetails() {
           </div>
         </article>
       </div>
+
+      {/* Project team */}
+      <section className="project-team-section">
+        <div className="project-section-heading">
+          <div>
+            <h2>Project team</h2>
+            <p>People responsible for this project.</p>
+          </div>
+
+          <span className="member-count">
+            <Users size={16} />
+            {members.length} members
+          </span>
+        </div>
+
+        {usersLoading && <p role="status">Loading project team...</p>}
+
+        {usersError && (
+          <p className="form-error" role="alert">
+            Unable to load team members: {usersError}
+          </p>
+        )}
+
+        {!usersLoading && !usersError && (
+          <div className="project-team-grid">
+            <article className="team-card owner-card">
+              <div className="team-card-heading">
+                <Crown size={17} />
+                <span>Project owner</span>
+              </div>
+
+              {owner ? (
+                <div className="team-user">
+                  <div className="user-avatar">
+                    {owner.avatar || owner.name.charAt(0)}
+                  </div>
+
+                  <div className="team-user-info">
+                    <h3>{owner.name}</h3>
+                    <p>{owner.email}</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="team-empty">Owner information unavailable.</p>
+              )}
+            </article>
+
+            <article className="team-card members-card">
+              <div className="team-card-heading">
+                <Users size={17} />
+                <span>Project members</span>
+              </div>
+
+              {members.length > 0 ? (
+                <div className="team-member-list">
+                  {members.map((member) => (
+                    <div className="team-user" key={member.id}>
+                      <div className="user-avatar">
+                        {member.avatar || member.name.charAt(0)}
+                      </div>
+
+                      <div className="team-user-info">
+                        <h3>{member.name}</h3>
+                        <p>{member.email}</p>
+                      </div>
+
+                      <span className="member-role">{member.role}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="team-empty">
+                  No members assigned to this project.
+                </p>
+              )}
+            </article>
+          </div>
+        )}
+      </section>
     </section>
   );
 }
