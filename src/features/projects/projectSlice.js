@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getProjects,
   createProject as createProjectApi,
+  updateProject as updateProjectApi,
 } from "../../services/projectService";
 
 export const fetchProjects = createAsyncThunk(
@@ -30,6 +31,19 @@ export const addProject = createAsyncThunk(
   },
 );
 
+export const updateProject = createAsyncThunk(
+  "projects/updateProject",
+  async ({ id, updates }, { rejectWithValue }) => {
+    try {
+      return await updateProjectApi(id, updates);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update project.",
+      );
+    }
+  },
+);
+
 const projectSlice = createSlice({
   name: "projects",
 
@@ -39,6 +53,8 @@ const projectSlice = createSlice({
     creating: false,
     error: null,
     createError: null,
+    updating: false,
+    updateError: null,
   },
 
   reducers: {},
@@ -69,6 +85,27 @@ const projectSlice = createSlice({
       .addCase(addProject.rejected, (state, action) => {
         state.creating = false;
         state.createError = action.payload;
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.updating = true;
+        state.updateError = null;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.updating = false;
+
+        const updatedProject = action.payload;
+
+        const index = state.items.findIndex(
+          (project) => String(project.id) === String(updatedProject.id),
+        );
+
+        if (index !== -1) {
+          state.items[index] = updatedProject;
+        }
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.updating = false;
+        state.updateError = action.payload || action.error.message;
       });
   },
 });

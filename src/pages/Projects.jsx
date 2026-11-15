@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { fetchProjects } from "../features/projects/projectSlice";
 import {
   selectProjects,
@@ -8,6 +8,7 @@ import {
   selectProjectError,
 } from "../features/projects/projectSelectors";
 import CreateProjectModal from "../components/project/CreateProjectModal";
+import EditProjectModal from "../components/project/EditProjectModal";
 
 function Projects() {
   const dispatch = useDispatch();
@@ -17,6 +18,11 @@ function Projects() {
   const error = useSelector(selectProjectError);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  const handleEditProject = (project) => {
+    setSelectedProject(project);
+  };
 
   useEffect(() => {
     if (projects.length === 0 && !loading) {
@@ -57,10 +63,23 @@ function Projects() {
                 >
                   {project.key}
                 </div>
+                <div className="project-card-actions">
+                  <span className={`status ${project.status}`}>
+                    {project.status}
+                  </span>
 
-                <span className={`status ${project.status}`}>
-                  {project.status}
-                </span>
+                  {project.status !== "completed" && (
+                    <button
+                      type="button"
+                      className="project-edit-button"
+                      onClick={() => handleEditProject(project)}
+                      aria-label={`Edit ${project.name}`}
+                      title="Edit project"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               <h3>{project.name}</h3>
@@ -68,7 +87,9 @@ function Projects() {
 
               <div className="progress-info">
                 <span>Progress</span>
-                <strong>{project.progress}%</strong>
+                <strong style={{ width: `${project.progress ?? 0}%` }}>
+                  {project.progress ?? 0}%
+                </strong>
               </div>
 
               <div
@@ -90,14 +111,29 @@ function Projects() {
       )}
 
       {!loading && !error && projects.length === 0 && (
-        <p className="empty-state">
-          No projects found. Create your first project.
-        </p>
+        <div className="empty-state">
+          <p>No projects found. Create your first project.</p>
+
+          <button
+            type="button"
+            className="create-button"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Plus size={18} />
+            Create project
+          </button>
+        </div>
       )}
 
       <CreateProjectModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <EditProjectModal
+        isOpen={Boolean(selectedProject)}
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
       />
     </section>
   );
