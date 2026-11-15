@@ -7,6 +7,7 @@ import App from "./App";
 import "./styles/_global.scss";
 import "./styles/layout.scss";
 import "./styles/dashboard.scss";
+import "./styles/modal.scss";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

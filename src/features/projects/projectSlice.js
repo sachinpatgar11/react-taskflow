@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getProjects } from "../../services/projectService";
+import {
+  getProjects,
+  createProject as createProjectApi,
+} from "../../services/projectService";
 
 export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
@@ -14,14 +17,32 @@ export const fetchProjects = createAsyncThunk(
   },
 );
 
+export const addProject = createAsyncThunk(
+  "projects/addProject",
+  async (project, { rejectWithValue }) => {
+    try {
+      return await createProjectApi(project);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Unable to create project.",
+      );
+    }
+  },
+);
+
 const projectSlice = createSlice({
   name: "projects",
+
   initialState: {
     items: [],
     loading: false,
+    creating: false,
     error: null,
+    createError: null,
   },
+
   reducers: {},
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchProjects.pending, (state) => {
@@ -35,6 +56,19 @@ const projectSlice = createSlice({
       .addCase(fetchProjects.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(addProject.pending, (state) => {
+        state.creating = true;
+        state.createError = null;
+      })
+      .addCase(addProject.fulfilled, (state, action) => {
+        state.creating = false;
+        state.items.unshift(action.payload);
+      })
+      .addCase(addProject.rejected, (state, action) => {
+        state.creating = false;
+        state.createError = action.payload;
       });
   },
 });
