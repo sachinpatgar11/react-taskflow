@@ -3,6 +3,7 @@ import {
   getProjects,
   createProject as createProjectApi,
   updateProject as updateProjectApi,
+  deleteProject as deleteProjectApi,
 } from "../../services/projectService";
 
 export const fetchProjects = createAsyncThunk(
@@ -44,6 +45,20 @@ export const updateProject = createAsyncThunk(
   },
 );
 
+export const deleteProject = createAsyncThunk(
+  "projects/deleteProject",
+  async (id, { rejectWithValue }) => {
+    try {
+      await deleteProjectApi(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete project.",
+      );
+    }
+  },
+);
+
 const projectSlice = createSlice({
   name: "projects",
 
@@ -55,6 +70,8 @@ const projectSlice = createSlice({
     createError: null,
     updating: false,
     updateError: null,
+    deleting: false,
+    deleteError: null,
   },
 
   reducers: {},
@@ -106,6 +123,22 @@ const projectSlice = createSlice({
       .addCase(updateProject.rejected, (state, action) => {
         state.updating = false;
         state.updateError = action.payload || action.error.message;
+      })
+      .addCase(deleteProject.pending, (state) => {
+        state.deleting = true;
+        state.deleteError = null;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.deleting = false;
+
+        state.items = state.items.filter(
+          (project) => String(project.id) !== String(action.payload),
+        );
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.deleting = false;
+        state.deleteError =
+          action.payload || action.error.message || "Failed to delete project.";
       });
   },
 });
