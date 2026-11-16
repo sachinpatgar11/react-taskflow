@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, FolderKanban, Users, Crown } from "lucide-react";
+import { ArrowLeft, FolderKanban, Users, Crown, Save } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchProjectById } from "../features/projects/projectSlice";
+import {
+  fetchProjectById,
+  updateProject,
+} from "../features/projects/projectSlice";
 import { fetchUsers } from "../features/users/userSlice";
 
 function ProjectDetails() {
@@ -19,6 +22,23 @@ function ProjectDetails() {
   const users = useSelector((state) => state.users.items);
   const usersLoading = useSelector((state) => state.users.loading);
   const usersError = useSelector((state) => state.users.error);
+
+  const [selectedOwnerId, setSelectedOwnerId] = useState("");
+  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
+
+  const [saveMessage, setSaveMessage] = useState("");
+
+  const saving = useSelector((state) => state.projects.updating);
+
+  const updateError = useSelector((state) => state.projects.updateError);
+
+  useEffect(() => {
+    if (project) {
+      setSelectedOwnerId(project.ownerId || "");
+      setSelectedMemberIds(project.memberIds || []);
+      setSaveMessage("");
+    }
+  }, [project?.id]);
 
   useEffect(() => {
     const request = dispatch(fetchProjectById(projectId));
@@ -43,6 +63,60 @@ function ProjectDetails() {
       users.find((user) => String(user.id) === String(memberId)),
     )
     .filter(Boolean);
+
+  const handleOwnerChange = (event) => {
+    const newOwnerId = event.target.value;
+
+    setSelectedOwnerId(newOwnerId);
+
+    // The project owner must also be a project member.
+    setSelectedMemberIds((currentMembers) => {
+      if (currentMembers.includes(newOwnerId)) {
+        return currentMembers;
+      }
+
+      return [...currentMembers, newOwnerId];
+    });
+  };
+
+  const handleMemberChange = (userId, checked) => {
+    setSelectedMemberIds((currentMembers) => {
+      if (checked) {
+        return currentMembers.includes(userId)
+          ? currentMembers
+          : [...currentMembers, userId];
+      }
+
+      return currentMembers.filter((id) => id !== userId);
+    });
+  };
+
+  const handleSaveTeam = async (event) => {
+    event.preventDefault();
+
+    if (!project || !selectedOwnerId) {
+      return;
+    }
+
+    try {
+      setSaveMessage("");
+
+      await dispatch(
+        updateProject({
+          id: project.id,
+          updates: {
+            ...project,
+            ownerId: selectedOwnerId,
+            memberIds: selectedMemberIds,
+          },
+        }),
+      ).unwrap();
+
+      setSaveMessage("Project team updated successfully.");
+    } catch {
+      // The error is available through Redux updateError.
+    }
+  };
 
   if (loading || (!project && !error)) {
     return (
@@ -218,6 +292,97 @@ function ProjectDetails() {
             </article>
           </div>
         )}
+      </section>
+      <section className="team-management-section">
+        <div className="project-section-heading">
+          <div>
+            <h2>Manage project team</h2>
+            <p>Assign an owner and manage project members.</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSaveTeam}>
+          <div className="team-management-card">
+            <div className="form-group">
+              <label htmlFor="project-owner">Project owner</label>
+
+              <select
+                id="project-owner"
+                value={selectedOwnerId}
+                onChange={handleOwnerChange}
+                disabled={usersLoading || saving}
+                required
+              >
+                <option value="">Select project owner</option>
+
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="member-selection">
+              <h3>Project members</h3>
+              <p>Select the users who should have access to this project.</p>
+
+              <div className="member-selection-list">
+                {users.map((user) => (
+                  <label className="member-selection-item" key={user.id}>
+                    <input
+                      type="checkbox"
+                      checked={selectedMemberIds.includes(user.id)}
+                      disabled={saving || selectedOwnerId === user.id}
+                      onChange={(event) =>
+                        handleMemberChange(user.id, event.target.checked)
+                      }
+                    />
+
+                    <span className="user-avatar">
+                      {user.avatar || user.name.charAt(0)}
+                    </span>
+
+                    <span className="member-selection-info">
+                      <strong>{user.name}</strong>
+                      <small>{user.email}</small>
+                    </span>
+
+                    {selectedOwnerId === user.id && (
+                      <span className="owner-indicator">
+                        <Crown size={14} />
+                        Owner
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {updateError && (
+              <p className="form-error" role="alert">
+                {updateError}
+              </p>
+            )}
+
+            {saveMessage && (
+              <p className="form-success" role="status">
+                {saveMessage}
+              </p>
+            )}
+
+            <div className="team-management-actions">
+              <button
+                type="submit"
+                className="create-button"
+                disabled={saving || usersLoading || !selectedOwnerId}
+              >
+                <Save size={16} />
+                {saving ? "Saving changes..." : "Save team changes"}
+              </button>
+            </div>
+          </div>
+        </form>
       </section>
     </section>
   );
