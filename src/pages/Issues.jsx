@@ -1,6 +1,4 @@
-import "../styles/issues.scss";
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AlertCircle,
@@ -11,6 +9,7 @@ import {
   ListTodo,
   RefreshCw,
 } from "lucide-react";
+import "../styles/issues.scss";
 
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -52,6 +51,9 @@ const priorityConfig = {
   critical: "Critical",
 };
 
+const normalizeValue = (value = "") =>
+  String(value).toLowerCase().trim().replace(/\s+/g, "-");
+
 const Issues = () => {
   const dispatch = useDispatch();
 
@@ -64,6 +66,30 @@ const Issues = () => {
 
   const users = useSelector((state) => state.users.items);
   const usersLoading = useSelector((state) => state.users.loading);
+
+  const [projectFilter, setProjectFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+
+  const filteredIssues = issues.filter((issue) => {
+    const matchesProject =
+      projectFilter === "all" || String(issue.projectId) === projectFilter;
+
+    const matchesStatus =
+      statusFilter === "all" || normalizeValue(issue.status) === statusFilter;
+
+    const matchesPriority =
+      priorityFilter === "all" ||
+      normalizeValue(issue.priority) === priorityFilter;
+
+    return matchesProject && matchesStatus && matchesPriority;
+  });
+
+  const resetFilters = () => {
+    setProjectFilter("all");
+    setStatusFilter("all");
+    setPriorityFilter("all");
+  };
 
   useEffect(() => {
     dispatch(fetchIssues());
@@ -125,20 +151,101 @@ const Issues = () => {
           <span>{issues.length} Issues</span>
         </div>
       </div>
+      <div className="issues-filter-bar">
+        <div className="filter-group">
+          <label htmlFor="project-filter">Project</label>
+          <select
+            id="project-filter"
+            value={projectFilter}
+            onChange={(event) => setProjectFilter(event.target.value)}
+          >
+            <option value="all">All Projects</option>
 
-      {issues.length === 0 ? (
+            {projects.map((project) => (
+              <option key={project.id} value={String(project.id)}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="status-filter">Status</label>
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="todo">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="review">Review</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="priority-filter">Priority</label>
+          <select
+            id="priority-filter"
+            value={priorityFilter}
+            onChange={(event) => setPriorityFilter(event.target.value)}
+          >
+            <option value="all">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          className="reset-filter-button"
+          onClick={resetFilters}
+          disabled={
+            projectFilter === "all" &&
+            statusFilter === "all" &&
+            priorityFilter === "all"
+          }
+        >
+          Reset filters
+        </button>
+      </div>
+
+      {filteredIssues.length === 0 ? (
         <div className="issues-empty">
           <ListTodo size={36} />
-          <h2>No issues found</h2>
-          <p>There are currently no issues to display.</p>
+
+          <h2>
+            {issues.length === 0 ? "No issues found" : "No matching issues"}
+          </h2>
+
+          <p>
+            {issues.length === 0
+              ? "There are currently no issues to display."
+              : "Try changing your filters to see more issues."}
+          </p>
+
+          {issues.length > 0 && (
+            <button
+              type="button"
+              className="reset-filter-button"
+              onClick={resetFilters}
+            >
+              Reset filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="issues-list">
-          {issues.map((issue) => {
+          {filteredIssues.map((issue) => {
             const project = getProject(issue.projectId);
             const assignee = getAssignee(issue.assigneeId);
 
-            const status = statusConfig[issue.status] || statusConfig.todo;
+            const status =
+              statusConfig[normalizeValue(issue.status)] || statusConfig.todo;
+            const priority = normalizeValue(issue.priority);
 
             const StatusIcon = status.icon;
 
@@ -148,10 +255,8 @@ const Issues = () => {
                   <div className="issue-title-row">
                     <h2>{issue.title}</h2>
 
-                    <span
-                      className={`issue-priority priority-${issue.priority}`}
-                    >
-                      {priorityConfig[issue.priority] || issue.priority}
+                    <span className={`issue-priority priority-${priority}`}>
+                      {priorityConfig[priority] || issue.priority}
                     </span>
                   </div>
 
