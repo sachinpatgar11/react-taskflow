@@ -8,8 +8,11 @@ import {
   Clock,
   ListTodo,
   RefreshCw,
+  Plus,
 } from "lucide-react";
 import "../styles/issues.scss";
+
+import CreateIssueModal from "../components/issues/CreateIssueModal";
 
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -52,7 +55,10 @@ const priorityConfig = {
 };
 
 const normalizeValue = (value = "") =>
-  String(value).toLowerCase().trim().replace(/\s+/g, "-");
+  String(value)
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_-]+/g, "");
 
 const Issues = () => {
   const dispatch = useDispatch();
@@ -70,13 +76,15 @@ const Issues = () => {
   const [projectFilter, setProjectFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const filteredIssues = issues.filter((issue) => {
     const matchesProject =
       projectFilter === "all" || String(issue.projectId) === projectFilter;
 
     const matchesStatus =
-      statusFilter === "all" || normalizeValue(issue.status) === statusFilter;
+      statusFilter === "all" ||
+      normalizeValue(issue.status) === normalizeValue(statusFilter);
 
     const matchesPriority =
       priorityFilter === "all" ||
@@ -145,10 +153,19 @@ const Issues = () => {
           <h1>Issues</h1>
           <p>Track, organize, and manage your team's work.</p>
         </div>
-
-        <div className="issues-count">
-          <ListTodo size={18} />
-          <span>{issues.length} Issues</span>
+        <div className="issues-header-actions">
+          <div className="issues-count">
+            <ListTodo size={18} />
+            <span>{issues.length} Issues</span>
+          </div>
+          <button
+            type="button"
+            className="create-button"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Plus size={18} />
+            Create Issue
+          </button>
         </div>
       </div>
       <div className="issues-filter-bar">
@@ -304,6 +321,11 @@ const Issues = () => {
           })}
         </div>
       )}
+
+      <CreateIssueModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };
