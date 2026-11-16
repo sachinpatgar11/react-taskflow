@@ -137,6 +137,13 @@ const projectSlice = createSlice({
         if (index !== -1) {
           state.items[index] = updatedProject;
         }
+        // Update the currently selected project as well.
+        if (
+          state.selectedProject &&
+          String(state.selectedProject.id) === String(updatedProject.id)
+        ) {
+          state.selectedProject = updatedProject;
+        }
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.updating = false;
