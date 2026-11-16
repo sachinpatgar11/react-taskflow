@@ -786,3 +786,147 @@
     display: none;
   }
 }
+
+.team-management-section {
+  margin-top: 32px;
+
+  .project-section-heading {
+    margin-bottom: 18px;
+
+    h2 {
+      margin: 0 0 6px;
+      color: #111827;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  }
+}
+
+.team-management-card {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  .form-group {
+    max-width: 420px;
+    margin-bottom: 28px;
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #111827;
+      font: inherit;
+
+      &:focus-visible {
+        outline: 2px solid #6366f1;
+        outline-offset: 2px;
+      }
+    }
+  }
+}
+
+.member-selection {
+  h3 {
+    margin: 0 0 6px;
+    color: #111827;
+    font-size: 15px;
+  }
+
+  > p {
+    margin: 0 0 16px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+}
+
+.member-selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-selection-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #c7d2fe;
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+
+  input:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.member-selection-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  strong {
+    color: #111827;
+    font-size: 13px;
+  }
+
+  small {
+    color: #6b7280;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+}
+
+.owner-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.team-management-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.form-success {
+  margin-top: 16px;
+  color: #15803d;
+  font-size: 13px;
+}
