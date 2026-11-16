@@ -14,10 +14,25 @@ export const fetchIssues = createAsyncThunk(
   },
 );
 
+export const createIssue = createAsyncThunk(
+  "issues/createIssue",
+  async (issueData, { rejectWithValue }) => {
+    try {
+      return await issueService.createIssue(issueData);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create issue.",
+      );
+    }
+  },
+);
+
 const initialState = {
   items: [],
   loading: false,
   error: null,
+  creating: false,
+  createError: null,
 };
 
 const issueSlice = createSlice({
@@ -37,6 +52,18 @@ const issueSlice = createSlice({
       .addCase(fetchIssues.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch issues.";
+      })
+      .addCase(createIssue.pending, (state) => {
+        state.creating = true;
+        state.createError = null;
+      })
+      .addCase(createIssue.fulfilled, (state, action) => {
+        state.creating = false;
+        state.items.unshift(action.payload);
+      })
+      .addCase(createIssue.rejected, (state, action) => {
+        state.creating = false;
+        state.createError = action.payload || "Failed to create issue.";
       });
   },
 });

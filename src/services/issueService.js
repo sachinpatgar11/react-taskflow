@@ -5,6 +5,12 @@ const getIssues = async () => {
   return response.data;
 };
 
+const createIssue = async (issueData) => {
+  const response = await api.post("/issues", issueData);
+  return response.data;
+};
+
 export default {
   getIssues,
+  createIssue,
 };
