@@ -359,7 +359,8 @@
   gap: 14px;
 }
 
-.create-issue-actions {
+.create-issue-actions,
+.modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -426,6 +427,50 @@
 
 @media (max-width: 600px) {
   .issues-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.issue-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.issue-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  background: #fff;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #4f46e5;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+  }
+}
+@media (max-width: 600px) {
+  .issue-card-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .issue-card-actions {
     width: 100%;
     justify-content: space-between;
   }
