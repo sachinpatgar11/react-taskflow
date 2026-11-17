@@ -9,10 +9,12 @@ import {
   ListTodo,
   RefreshCw,
   Plus,
+  Pencil,
 } from "lucide-react";
 import "../styles/issues.scss";
 
 import CreateIssueModal from "../components/issues/CreateIssueModal";
+import EditIssueModal from "../components/issues/EditIssueModal";
 
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -77,6 +79,8 @@ const Issues = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const filteredIssues = issues.filter((issue) => {
     const matchesProject =
@@ -97,6 +101,16 @@ const Issues = () => {
     setProjectFilter("all");
     setStatusFilter("all");
     setPriorityFilter("all");
+  };
+
+  const handleEditIssue = (issue) => {
+    setSelectedIssue(issue);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedIssue(null);
   };
 
   useEffect(() => {
@@ -298,10 +312,22 @@ const Issues = () => {
                 </div>
 
                 <div className="issue-card-footer">
-                  <span className={`issue-status status-${status.className}`}>
-                    <StatusIcon size={14} />
-                    {status.label}
-                  </span>
+                  <div className="issue-card-actions">
+                    <span className={`issue-status status-${status.className}`}>
+                      <StatusIcon size={14} />
+                      {status.label}
+                    </span>
+
+                    <button
+                      type="button"
+                      className="issue-edit-button"
+                      onClick={() => handleEditIssue(issue)}
+                      aria-label={`Edit ${issue.title}`}
+                    >
+                      <Pencil size={15} />
+                      Edit
+                    </button>
+                  </div>
 
                   <div className="issue-assignee">
                     {assignee ? (
@@ -325,6 +351,11 @@ const Issues = () => {
       <CreateIssueModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+      <EditIssueModal
+        isOpen={isEditModalOpen}
+        issue={selectedIssue}
+        onClose={handleCloseEditModal}
       />
     </div>
   );
