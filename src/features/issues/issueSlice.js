@@ -27,12 +27,27 @@ export const createIssue = createAsyncThunk(
   },
 );
 
+export const updateIssue = createAsyncThunk(
+  "issues/updateIssue",
+  async ({ id, updates }, { rejectWithValue }) => {
+    try {
+      return await issueService.updateIssue(id, updates);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update issue.",
+      );
+    }
+  },
+);
+
 const initialState = {
   items: [],
   loading: false,
   error: null,
   creating: false,
   createError: null,
+  updating: false,
+  updateError: null,
 };
 
 const issueSlice = createSlice({
@@ -64,6 +79,27 @@ const issueSlice = createSlice({
       .addCase(createIssue.rejected, (state, action) => {
         state.creating = false;
         state.createError = action.payload || "Failed to create issue.";
+      })
+      .addCase(updateIssue.pending, (state) => {
+        state.updating = true;
+        state.updateError = null;
+      })
+      .addCase(updateIssue.fulfilled, (state, action) => {
+        state.updating = false;
+
+        const updatedIssue = action.payload;
+
+        const index = state.items.findIndex(
+          (issue) => String(issue.id) === String(updatedIssue.id),
+        );
+
+        if (index !== -1) {
+          state.items[index] = updatedIssue;
+        }
+      })
+      .addCase(updateIssue.rejected, (state, action) => {
+        state.updating = false;
+        state.updateError = action.payload || "Failed to update issue.";
       });
   },
 });

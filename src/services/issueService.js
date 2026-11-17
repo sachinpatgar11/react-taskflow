@@ -10,7 +10,13 @@ const createIssue = async (issueData) => {
   return response.data;
 };
 
+const updateIssue = async (id, issueData) => {
+  const response = await api.put(`/issues/${id}`, issueData);
+  return response.data;
+};
+
 export default {
   getIssues,
   createIssue,
+  updateIssue,
 };
