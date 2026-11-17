@@ -15,8 +15,14 @@ const updateIssue = async (id, issueData) => {
   return response.data;
 };
 
+const deleteIssue = async (id) => {
+  const response = await api.delete(`/issues/${id}`);
+  return response.data;
+};
+
 export default {
   getIssues,
   createIssue,
   updateIssue,
+  deleteIssue,
 };

@@ -40,6 +40,20 @@ export const updateIssue = createAsyncThunk(
   },
 );
 
+export const deleteIssue = createAsyncThunk(
+  "issues/deleteIssue",
+  async (id, { rejectWithValue }) => {
+    try {
+      await issueService.deleteIssue(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete issue.",
+      );
+    }
+  },
+);
+
 const initialState = {
   items: [],
   loading: false,
@@ -48,6 +62,8 @@ const initialState = {
   createError: null,
   updating: false,
   updateError: null,
+  deleting: false,
+  deleteError: null,
 };
 
 const issueSlice = createSlice({
@@ -100,6 +116,23 @@ const issueSlice = createSlice({
       .addCase(updateIssue.rejected, (state, action) => {
         state.updating = false;
         state.updateError = action.payload || "Failed to update issue.";
+      })
+      .addCase(deleteIssue.pending, (state) => {
+        state.deleting = true;
+        state.deleteError = null;
+      })
+
+      .addCase(deleteIssue.fulfilled, (state, action) => {
+        state.deleting = false;
+
+        state.items = state.items.filter(
+          (issue) => String(issue.id) !== String(action.payload),
+        );
+      })
+
+      .addCase(deleteIssue.rejected, (state, action) => {
+        state.deleting = false;
+        state.deleteError = action.payload || "Failed to delete issue.";
       });
   },
 });
