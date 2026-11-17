@@ -10,11 +10,13 @@ import {
   RefreshCw,
   Plus,
   Pencil,
+  Trash2,
 } from "lucide-react";
 import "../styles/issues.scss";
 
 import CreateIssueModal from "../components/issues/CreateIssueModal";
 import EditIssueModal from "../components/issues/EditIssueModal";
+import DeleteIssueModal from "../components/issues/DeleteIssueModal";
 
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -81,6 +83,9 @@ const Issues = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedIssueForDelete, setSelectedIssueForDelete] = useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const filteredIssues = issues.filter((issue) => {
     const matchesProject =
@@ -111,6 +116,16 @@ const Issues = () => {
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedIssue(null);
+  };
+
+  const handleDeleteIssue = (issue) => {
+    setSelectedIssueForDelete(issue);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedIssueForDelete(null);
   };
 
   useEffect(() => {
@@ -327,6 +342,16 @@ const Issues = () => {
                       <Pencil size={15} />
                       Edit
                     </button>
+
+                    <button
+                      type="button"
+                      className="issue-delete-button"
+                      onClick={() => handleDeleteIssue(issue)}
+                      aria-label={`Delete ${issue.title}`}
+                    >
+                      <Trash2 size={15} />
+                      Delete
+                    </button>
                   </div>
 
                   <div className="issue-assignee">
@@ -356,6 +381,11 @@ const Issues = () => {
         isOpen={isEditModalOpen}
         issue={selectedIssue}
         onClose={handleCloseEditModal}
+      />
+      <DeleteIssueModal
+        isOpen={isDeleteModalOpen}
+        issue={selectedIssueForDelete}
+        onClose={handleCloseDeleteModal}
       />
     </div>
   );
