@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,6 +12,9 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+
+import EditIssueModal from "../components/issues/EditIssueModal";
+import DeleteIssueModal from "../components/issues/DeleteIssueModal";
 
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -52,6 +55,9 @@ const IssueDetails = () => {
   const { issueId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const issues = useSelector((state) => state.issues.items);
   const issuesLoading = useSelector((state) => state.issues.loading);
@@ -176,9 +182,7 @@ const IssueDetails = () => {
           <button
             type="button"
             className="issue-edit-button"
-            onClick={() => {
-              // Edit modal integration will be added later.
-            }}
+            onClick={() => setIsEditModalOpen(true)}
           >
             <Pencil size={15} />
             Edit
@@ -187,9 +191,7 @@ const IssueDetails = () => {
           <button
             type="button"
             className="issue-delete-button"
-            onClick={() => {
-              // Delete modal integration will be added later.
-            }}
+            onClick={() => setIsDeleteModalOpen(true)}
           >
             <Trash2 size={15} />
             Delete
@@ -274,6 +276,18 @@ const IssueDetails = () => {
           </div>
         </aside>
       </div>
+
+      <EditIssueModal
+        isOpen={isEditModalOpen}
+        issue={issue}
+        onClose={() => setIsEditModalOpen(false)}
+      />
+      <DeleteIssueModal
+        isOpen={isDeleteModalOpen}
+        issue={issue}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDeleteSuccess={() => navigate("/issues")}
+      />
     </div>
   );
 };

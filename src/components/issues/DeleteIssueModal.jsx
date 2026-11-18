@@ -3,7 +3,7 @@ import { AlertTriangle, Trash2 } from "lucide-react";
 import Modal from "../common/Modal";
 import { deleteIssue } from "../../features/issues/issueSlice";
 
-const DeleteIssueModal = ({ isOpen, issue, onClose }) => {
+const DeleteIssueModal = ({ isOpen, issue, onClose, onDeleteSuccess }) => {
   const dispatch = useDispatch();
 
   const { deleting, deleteError } = useSelector((state) => state.issues);
@@ -14,6 +14,7 @@ const DeleteIssueModal = ({ isOpen, issue, onClose }) => {
     try {
       await dispatch(deleteIssue(issue.id)).unwrap();
       onClose();
+      onDeleteSuccess?.();
     } catch (error) {
       console.error("Failed to delete issue:", error);
     }
