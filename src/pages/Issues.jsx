@@ -80,6 +80,8 @@ const Issues = () => {
   const [projectFilter, setProjectFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -88,6 +90,13 @@ const Issues = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const filteredIssues = issues.filter((issue) => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
+    const matchesSearch =
+      !normalizedSearch ||
+      issue.title?.toLowerCase().includes(normalizedSearch) ||
+      issue.description?.toLowerCase().includes(normalizedSearch);
+
     const matchesProject =
       projectFilter === "all" || String(issue.projectId) === projectFilter;
 
@@ -99,10 +108,11 @@ const Issues = () => {
       priorityFilter === "all" ||
       normalizeValue(issue.priority) === priorityFilter;
 
-    return matchesProject && matchesStatus && matchesPriority;
+    return matchesSearch && matchesProject && matchesStatus && matchesPriority;
   });
 
   const resetFilters = () => {
+    setSearchQuery("");
     setProjectFilter("all");
     setStatusFilter("all");
     setPriorityFilter("all");
@@ -199,6 +209,16 @@ const Issues = () => {
       </div>
       <div className="issues-filter-bar">
         <div className="filter-group">
+          <label htmlFor="issue-search">Search Issues</label>
+          <input
+            id="issue-search"
+            type="search"
+            placeholder="Search by title or description..."
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+        </div>
+        <div className="filter-group">
           <label htmlFor="project-filter">Project</label>
           <select
             id="project-filter"
@@ -250,6 +270,7 @@ const Issues = () => {
           className="reset-filter-button"
           onClick={resetFilters}
           disabled={
+            !searchQuery.trim() &&
             projectFilter === "all" &&
             statusFilter === "all" &&
             priorityFilter === "all"
