@@ -5,6 +5,7 @@ import Projects from "./pages/Projects";
 import Issues from "./pages/Issues";
 import NotFound from "./pages/NotFound";
 import ProjectDetails from "./pages/ProjectDetails";
+import IssueDetails from "./pages/IssueDetails";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:projectId" element={<ProjectDetails />} />
         <Route path="/issues" element={<Issues />} />
+        <Route path="/issues/:issueId" element={<IssueDetails />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

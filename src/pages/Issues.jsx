@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   AlertCircle,
   CalendarDays,
@@ -372,7 +373,9 @@ const Issues = () => {
               <article className="issue-card" key={issue.id}>
                 <div className="issue-card-main">
                   <div className="issue-title-row">
-                    <h2>{issue.title}</h2>
+                    <h2>
+                      <Link to={`/issues/${issue.id}`}>{issue.title}</Link>
+                    </h2>
 
                     <span className={`issue-priority priority-${priority}`}>
                       {priorityConfig[priority] || issue.priority}
