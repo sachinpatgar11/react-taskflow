@@ -81,6 +81,7 @@ const Issues = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -116,7 +117,41 @@ const Issues = () => {
     setProjectFilter("all");
     setStatusFilter("all");
     setPriorityFilter("all");
+    setSortBy("newest");
   };
+
+  const sortedIssues = [...filteredIssues].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.createdAt) - new Date(a.createdAt);
+
+      case "oldest":
+        return new Date(a.createdAt) - new Date(b.createdAt);
+
+      case "priority": {
+        const priorityOrder = {
+          critical: 4,
+          high: 3,
+          medium: 2,
+          low: 1,
+        };
+
+        return (
+          (priorityOrder[normalizeValue(b.priority)] || 0) -
+          (priorityOrder[normalizeValue(a.priority)] || 0)
+        );
+      }
+
+      case "title-asc":
+        return a.title.localeCompare(b.title);
+
+      case "title-desc":
+        return b.title.localeCompare(a.title);
+
+      default:
+        return 0;
+    }
+  });
 
   const handleEditIssue = (issue) => {
     setSelectedIssue(issue);
@@ -265,6 +300,22 @@ const Issues = () => {
           </select>
         </div>
 
+        <div className="filter-group">
+          <label htmlFor="issue-sort">Sort By</label>
+
+          <select
+            id="issue-sort"
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value)}
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="priority">Priority: High to Low</option>
+            <option value="title-asc">Title: A to Z</option>
+            <option value="title-desc">Title: Z to A</option>
+          </select>
+        </div>
+
         <button
           type="button"
           className="reset-filter-button"
@@ -273,7 +324,8 @@ const Issues = () => {
             !searchQuery.trim() &&
             projectFilter === "all" &&
             statusFilter === "all" &&
-            priorityFilter === "all"
+            priorityFilter === "all" &&
+            sortBy === "newest"
           }
         >
           Reset filters
@@ -306,7 +358,7 @@ const Issues = () => {
         </div>
       ) : (
         <div className="issues-list">
-          {filteredIssues.map((issue) => {
+          {sortedIssues.map((issue) => {
             const project = getProject(issue.projectId);
             const assignee = getAssignee(issue.assigneeId);
 
