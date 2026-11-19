@@ -19,6 +19,7 @@ import DeleteIssueModal from "../components/issues/DeleteIssueModal";
 import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
 import { fetchUsers } from "../features/users/userSlice";
+import { updateIssue } from "../features/issues/issueSlice";
 
 import "../styles/issue-details.scss";
 
@@ -101,6 +102,23 @@ const IssueDetails = () => {
   const assignee = users.find(
     (item) => String(item.id) === String(issue?.assigneeId),
   );
+
+  const handleStatusChange = async (event) => {
+    const newStatus = event.target.value;
+
+    try {
+      await dispatch(
+        updateIssue({
+          id: issue.id,
+          updates: {
+            status: newStatus,
+          },
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.error("Failed to update issue status:", error);
+    }
+  };
 
   const getInitials = (name = "") =>
     name
@@ -213,12 +231,18 @@ const IssueDetails = () => {
             <h2>Issue Information</h2>
 
             <div className="issue-detail-row">
-              <span>Status</span>
+              <label htmlFor="issue-status">Status</label>
 
-              <span className={`issue-status status-${status.className}`}>
-                <StatusIcon size={14} />
-                {status.label}
-              </span>
+              <select
+                id="issue-status"
+                value={issue.status}
+                onChange={handleStatusChange}
+              >
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Review">Review</option>
+                <option value="Done">Done</option>
+              </select>
             </div>
 
             <div className="issue-detail-row">
