@@ -120,6 +120,23 @@ const IssueDetails = () => {
     }
   };
 
+  const handleAssigneeChange = async (event) => {
+    const newAssigneeId = event.target.value;
+
+    try {
+      await dispatch(
+        updateIssue({
+          id: issue.id,
+          updates: {
+            assigneeId: newAssigneeId,
+          },
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.error("Failed to update issue assignee:", error);
+    }
+  };
+
   const getInitials = (name = "") =>
     name
       .split(" ")
@@ -284,19 +301,25 @@ const IssueDetails = () => {
           </div>
 
           <div className="issue-details-card">
-            <h2>Assignee</h2>
+            <div className="issue-detail-row">
+              <label htmlFor="issue-assignee">
+                <h2>Assignee</h2>
+              </label>
 
-            {assignee ? (
-              <div className="issue-assignee">
-                <span className="user-avatar">
-                  {assignee.avatar || getInitials(assignee.name)}
-                </span>
+              <select
+                id="issue-assignee"
+                value={issue.assigneeId || ""}
+                onChange={handleAssigneeChange}
+              >
+                <option value="">Unassigned</option>
 
-                <span>{assignee.name}</span>
-              </div>
-            ) : (
-              <p>Unassigned</p>
-            )}
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </aside>
       </div>
