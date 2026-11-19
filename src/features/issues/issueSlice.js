@@ -110,7 +110,10 @@ const issueSlice = createSlice({
         );
 
         if (index !== -1) {
-          state.items[index] = updatedIssue;
+          state.items[index] = {
+            ...state.items[index],
+            ...action.payload,
+          };
         }
       })
       .addCase(updateIssue.rejected, (state, action) => {

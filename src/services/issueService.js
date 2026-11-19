@@ -11,7 +11,7 @@ const createIssue = async (issueData) => {
 };
 
 const updateIssue = async (id, issueData) => {
-  const response = await api.put(`/issues/${id}`, issueData);
+  const response = await api.patch(`/issues/${id}`, issueData);
   return response.data;
 };
 
