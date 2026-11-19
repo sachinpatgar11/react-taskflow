@@ -137,6 +137,23 @@ const IssueDetails = () => {
     }
   };
 
+  const handlePriorityChange = async (event) => {
+    const newPriority = event.target.value;
+
+    try {
+      await dispatch(
+        updateIssue({
+          id: issue.id,
+          updates: {
+            priority: newPriority,
+          },
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.error("Failed to update issue priority:", error);
+    }
+  };
+
   const getInitials = (name = "") =>
     name
       .split(" ")
@@ -263,11 +280,20 @@ const IssueDetails = () => {
             </div>
 
             <div className="issue-detail-row">
-              <span>Priority</span>
+              <div className="issue-detail-row">
+                <label htmlFor="issue-priority">Priority</label>
 
-              <span className={`issue-priority priority-${priority}`}>
-                {issue.priority}
-              </span>
+                <select
+                  id="issue-priority"
+                  value={issue.priority || "medium"}
+                  onChange={handlePriorityChange}
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
             </div>
 
             <div className="issue-detail-row">
