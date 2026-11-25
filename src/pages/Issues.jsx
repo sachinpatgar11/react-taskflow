@@ -30,26 +30,14 @@ import {
 } from "../features/issues/issueSelectors";
 
 const statusConfig = {
-  todo: {
-    label: "To Do",
-    className: "todo",
-    icon: Circle,
-  },
-  "in-progress": {
+  todo: { label: "To Do", className: "todo", icon: Circle },
+  inprogress: {
     label: "In Progress",
     className: "in-progress",
     icon: Clock,
   },
-  review: {
-    label: "In Review",
-    className: "review",
-    icon: AlertCircle,
-  },
-  done: {
-    label: "Done",
-    className: "done",
-    icon: CheckCircle2,
-  },
+  review: { label: "In Review", className: "review", icon: AlertCircle },
+  done: { label: "Done", className: "done", icon: CheckCircle2 },
 };
 
 const priorityConfig = {
