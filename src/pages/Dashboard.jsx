@@ -8,6 +8,14 @@ import {
   ClipboardList,
   Circle,
 } from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 import { fetchProjects } from "../features/projects/projectSlice";
 import {
@@ -137,6 +145,23 @@ function Dashboard() {
     ];
   }, [issues]);
 
+  const issueStatusData = useMemo(() => {
+    const statusConfig = [
+      { name: "To Do", key: "todo", color: "#94a3b8" },
+      { name: "In Progress", key: "inprogress", color: "#3b82f6" },
+      { name: "In Review", key: "review", color: "#f59e0b" },
+      { name: "Done", key: "done", color: "#10b981" },
+    ];
+
+    return statusConfig.map((status) => ({
+      name: status.name,
+      value: issues.filter(
+        (issue) => normalizeStatus(issue.status) === status.key,
+      ).length,
+      color: status.color,
+    }));
+  }, [issues]);
+
   const handleRetry = () => {
     dispatch(fetchProjects());
     dispatch(fetchIssues());
@@ -197,6 +222,45 @@ function Dashboard() {
                 <strong>{value}</strong>
               </article>
             ))}
+          </div>
+
+          <div className="dashboard-charts">
+            <article className="chart-card">
+              <div className="section-heading">
+                <div>
+                  <h2>Issue Status Distribution</h2>
+                  <p>Breakdown of issues by their current status.</p>
+                </div>
+              </div>
+
+              <div className="status-chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={issueStatusData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={100}
+                      paddingAngle={3}
+                      stroke="none"
+                    >
+                      {issueStatusData.map((entry) => (
+                        <Cell
+                          key={entry.key || entry.name}
+                          fill={entry.color}
+                        />
+                      ))}
+                    </Pie>
+
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </article>
           </div>
 
           {/* Recent projects */}
