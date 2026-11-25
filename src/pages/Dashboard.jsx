@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   FolderKanban,
   CircleCheck,
@@ -7,6 +8,8 @@ import {
   TrendingUp,
   ClipboardList,
   Circle,
+  Activity,
+  CircleDot,
 } from "lucide-react";
 import {
   PieChart,
@@ -36,12 +39,38 @@ import {
   selectIssuesError,
 } from "../features/issues/issueSelectors";
 
+import { fetchActivities } from "../features/activities/activitySlice";
+import {
+  selectActivities,
+  selectActivitiesLoading,
+  selectActivitiesError,
+} from "../features/activities/activitySelectors";
+
+import { fetchUsers } from "../features/users/userSlice";
+import { selectUsers } from "../features/users/userSelectors";
+
 // Normalize status values such as "In Progress" and "in-progress"
 const normalizeStatus = (status = "") =>
   String(status)
     .toLowerCase()
     .trim()
     .replace(/[\s_-]+/g, "");
+
+const getRelativeTime = (date) => {
+  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+
+  if (Number.isNaN(seconds)) return "Unknown time";
+  if (seconds < 60) return "Just now";
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
 
 function Dashboard() {
   const dispatch = useDispatch();
@@ -56,9 +85,18 @@ function Dashboard() {
   const issuesLoading = useSelector(selectIssuesLoading);
   const issuesError = useSelector(selectIssuesError);
 
+  // Activities state
+  const activities = useSelector(selectActivities);
+  const activitiesLoading = useSelector(selectActivitiesLoading);
+  const activitiesError = useSelector(selectActivitiesError);
+
+  const users = useSelector(selectUsers);
+
   useEffect(() => {
     dispatch(fetchProjects());
     dispatch(fetchIssues());
+    dispatch(fetchActivities());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   // Project statistics
@@ -187,6 +225,8 @@ function Dashboard() {
   const handleRetry = () => {
     dispatch(fetchProjects());
     dispatch(fetchIssues());
+    dispatch(fetchActivities());
+    dispatch(fetchUsers());
   };
 
   return (
@@ -364,6 +404,76 @@ function Dashboard() {
           {projects.length === 0 && (
             <p className="empty-state">No projects available yet.</p>
           )}
+
+          <section className="activity-section">
+            <div className="section-heading">
+              <div>
+                <h2>Recent Activity</h2>
+                <p>Latest updates across your workspace.</p>
+              </div>
+            </div>
+
+            {activitiesLoading && (
+              <p className="state-message" role="status">
+                Loading activities...
+              </p>
+            )}
+
+            {activitiesError && (
+              <div className="error-message" role="alert">
+                {activitiesError}
+                <button onClick={() => dispatch(fetchActivities())}>
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {!activitiesLoading && !activitiesError && (
+              <div className="activity-list">
+                {activities.length > 0 ? (
+                  activities
+                    .slice()
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+                    )
+                    .slice(0, 5)
+                    .map((activity) => {
+                      const user = users.find(
+                        (item) => String(item.id) === String(activity.userId),
+                      );
+
+                      return (
+                        <article className="activity-item" key={activity.id}>
+                          <div className="activity-avatar">
+                            {user?.avatar || "?"}
+                          </div>
+
+                          <div className="activity-content">
+                            <p>
+                              <strong>{user?.name || "Unknown user"}</strong>{" "}
+                              {activity.message}
+                            </p>
+
+                            <span className="activity-entity">
+                              {activity.entityName}
+                            </span>
+                          </div>
+
+                          <time
+                            className="activity-time"
+                            dateTime={activity.createdAt}
+                          >
+                            {getRelativeTime(activity.createdAt)}
+                          </time>
+                        </article>
+                      );
+                    })
+                ) : (
+                  <p className="empty-state">No recent activity available.</p>
+                )}
+              </div>
+            )}
+          </section>
         </>
       )}
     </section>

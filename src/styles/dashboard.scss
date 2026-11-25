@@ -268,3 +268,79 @@
     grid-template-columns: 1fr;
   }
 }
+
+.activity-section {
+  margin-bottom: 38px;
+}
+
+.activity-list {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 20px;
+  border-bottom: 1px solid $border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.activity-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.activity-content {
+  flex: 1;
+  min-width: 0;
+
+  p {
+    margin: 0 0 5px;
+    color: $text-primary;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.activity-entity {
+  color: $text-secondary;
+  font-size: 13px;
+}
+
+.activity-time {
+  flex-shrink: 0;
+  color: $text-secondary;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .activity-item {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .activity-time {
+    font-size: 11px;
+  }
+}
