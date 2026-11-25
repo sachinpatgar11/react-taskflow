@@ -15,6 +15,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 
 import { fetchProjects } from "../features/projects/projectSlice";
@@ -162,6 +167,23 @@ function Dashboard() {
     }));
   }, [issues]);
 
+  const issuePriorityData = useMemo(() => {
+    const priorityConfig = [
+      { name: "Critical", key: "critical", color: "#ef4444" },
+      { name: "High", key: "high", color: "#f97316" },
+      { name: "Medium", key: "medium", color: "#eab308" },
+      { name: "Low", key: "low", color: "#22c55e" },
+    ];
+
+    return priorityConfig.map((priority) => ({
+      name: priority.name,
+      count: issues.filter(
+        (issue) => normalizeStatus(issue.priority) === priority.key,
+      ).length,
+      color: priority.color,
+    }));
+  }, [issues]);
+
   const handleRetry = () => {
     dispatch(fetchProjects());
     dispatch(fetchIssues());
@@ -258,6 +280,33 @@ function Dashboard() {
                     <Tooltip />
                     <Legend verticalAlign="bottom" />
                   </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </article>
+            <article className="chart-card">
+              <div className="section-heading">
+                <div>
+                  <h2>Issue Priority Distribution</h2>
+                  <p>Breakdown of issues by their priority level.</p>
+                </div>
+              </div>
+
+              <div className="priority-chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={issuePriorityData}
+                    margin={{ top: 10, right: 10, left: -15, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                      {issuePriorityData.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </article>

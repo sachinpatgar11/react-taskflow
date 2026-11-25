@@ -252,3 +252,19 @@
   height: 300px;
   margin-top: 10px;
 }
+
+.dashboard-charts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.priority-chart {
+  width: 100%;
+  height: 300px;
+  margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+}
