@@ -101,5 +101,46 @@
       "priority": "medium",
       "createdAt": "2026-11-05"
     }
+  ],
+  "activities": [
+    {
+      "id": "1",
+      "type": "issue_created",
+      "message": "created a new issue",
+      "entityName": "Create responsive navigation",
+      "userId": "1",
+      "projectId": "1",
+      "issueId": "1",
+      "createdAt": "2026-11-12T08:30:00.000Z"
+    },
+    {
+      "id": "2",
+      "type": "status_changed",
+      "message": "changed issue status to In Progress",
+      "entityName": "Fix login validation",
+      "userId": "2",
+      "projectId": "2",
+      "issueId": "2",
+      "createdAt": "2026-11-12T09:15:00.000Z"
+    },
+    {
+      "id": "3",
+      "type": "project_created",
+      "message": "created a new project",
+      "entityName": "Website Redesign",
+      "userId": "1",
+      "projectId": "1",
+      "createdAt": "2026-11-12T10:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "type": "issue_assigned",
+      "message": "assigned an issue to Sarah Wilson",
+      "entityName": "Optimize dashboard performance",
+      "userId": "1",
+      "projectId": "1",
+      "issueId": "4",
+      "createdAt": "2026-11-12T10:45:00.000Z"
+    }
   ]
 }
