@@ -163,8 +163,12 @@ const IssueDetails = () => {
   const handleAssigneeChange = async (event) => {
     const newAssigneeId = event.target.value;
 
+    const selectedUser = users.find(
+      (user) => String(user.id) === String(newAssigneeId),
+    );
+
     try {
-      await dispatch(
+      const updatedIssue = await dispatch(
         updateIssue({
           id: issue.id,
           updates: {
@@ -172,6 +176,27 @@ const IssueDetails = () => {
           },
         }),
       ).unwrap();
+
+      const activityData = {
+        type: "issue_assigned",
+        message: selectedUser
+          ? `assigned an issue to ${selectedUser.name}`
+          : "removed the issue assignee",
+        entityName: updatedIssue.title || issue.title,
+        userId: "1",
+        projectId: updatedIssue.projectId || issue.projectId,
+        issueId: updatedIssue.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Assignee updated, but activity could not be recorded:",
+          activityError,
+        );
+      }
     } catch (error) {
       console.error("Failed to update issue assignee:", error);
     }
