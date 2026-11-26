@@ -19,6 +19,19 @@ const normalizeStatus = (status = "") => {
   return statusMap[normalized] || "todo";
 };
 
+const normalizePriority = (priority = "") => {
+  const normalized = String(priority).trim().toLowerCase();
+
+  const priorityMap = {
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    critical: "Critical",
+  };
+
+  return priorityMap[normalized] || "Medium";
+};
+
 const initialFormData = {
   title: "",
   description: "",
@@ -48,7 +61,7 @@ const EditIssueModal = ({ isOpen, issue, onClose }) => {
         description: issue.description || "",
         projectId: String(issue.projectId || ""),
         assigneeId: String(issue.assigneeId || ""),
-        priority: issue.priority || "Medium",
+        priority: normalizePriority(issue.priority),
         status: normalizeStatus(issue.status),
       });
 
