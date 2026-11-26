@@ -3,13 +3,29 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../common/Modal";
 import { updateIssue } from "../../features/issues/issueSlice";
 
+const normalizeStatus = (status = "") => {
+  const normalized = String(status)
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_-]+/g, "");
+
+  const statusMap = {
+    todo: "todo",
+    inprogress: "in-progress",
+    review: "review",
+    done: "done",
+  };
+
+  return statusMap[normalized] || "todo";
+};
+
 const initialFormData = {
   title: "",
   description: "",
   projectId: "",
   assigneeId: "",
   priority: "Medium",
-  status: "To Do",
+  status: "todo",
 };
 
 const EditIssueModal = ({ isOpen, issue, onClose }) => {
@@ -33,7 +49,7 @@ const EditIssueModal = ({ isOpen, issue, onClose }) => {
         projectId: String(issue.projectId || ""),
         assigneeId: String(issue.assigneeId || ""),
         priority: issue.priority || "Medium",
-        status: issue.status || "To Do",
+        status: normalizeStatus(issue.status),
       });
 
       setValidationError("");
@@ -217,10 +233,10 @@ const EditIssueModal = ({ isOpen, issue, onClose }) => {
               value={formData.status}
               onChange={handleChange}
             >
-              <option value="To Do">To Do</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Review">Review</option>
-              <option value="Done">Done</option>
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="review">Review</option>
+              <option value="done">Done</option>
             </select>
           </div>
         </div>

@@ -52,6 +52,12 @@ const normalizeValue = (value = "") =>
     .trim()
     .replace(/[\s_-]+/g, "");
 
+const getStatusValue = (status = "") => {
+  const normalized = normalizeValue(status);
+
+  return normalized === "inprogress" ? "in-progress" : normalized;
+};
+
 const IssueDetails = () => {
   const { issueId } = useParams();
   const navigate = useNavigate();
@@ -269,13 +275,13 @@ const IssueDetails = () => {
 
               <select
                 id="issue-status"
-                value={issue.status}
+                value={getStatusValue(issue.status)}
                 onChange={handleStatusChange}
               >
-                <option value="To Do">To Do</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Review">Review</option>
-                <option value="Done">Done</option>
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">In Review</option>
+                <option value="done">Done</option>
               </select>
             </div>
 
