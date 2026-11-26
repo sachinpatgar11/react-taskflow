@@ -20,6 +20,7 @@ import { fetchIssues } from "../features/issues/issueSlice";
 import { fetchProjects } from "../features/projects/projectSlice";
 import { fetchUsers } from "../features/users/userSlice";
 import { updateIssue } from "../features/issues/issueSlice";
+import { createActivity } from "../features/activities/activitySlice";
 
 import "../styles/issue-details.scss";
 
@@ -56,6 +57,17 @@ const getStatusValue = (status = "") => {
   const normalized = normalizeValue(status);
 
   return normalized === "inprogress" ? "in-progress" : normalized;
+};
+
+const getStatusLabel = (status) => {
+  const statusLabels = {
+    todo: "To Do",
+    "in-progress": "In Progress",
+    review: "In Review",
+    done: "Done",
+  };
+
+  return statusLabels[status] || status;
 };
 
 const IssueDetails = () => {
@@ -113,7 +125,8 @@ const IssueDetails = () => {
     const newStatus = event.target.value;
 
     try {
-      await dispatch(
+      // 1. Update the issue status
+      const updatedIssue = await dispatch(
         updateIssue({
           id: issue.id,
           updates: {
@@ -121,6 +134,27 @@ const IssueDetails = () => {
           },
         }),
       ).unwrap();
+
+      // 2. Create an activity entry
+      const activityData = {
+        type: "status_changed",
+        message: `changed issue status to ${getStatusLabel(newStatus)}`,
+        entityName: updatedIssue.title || issue.title,
+        userId: "1",
+        projectId: updatedIssue.projectId || issue.projectId,
+        issueId: updatedIssue.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      // 3. Save the activity independently
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Status updated, but activity could not be recorded:",
+          activityError,
+        );
+      }
     } catch (error) {
       console.error("Failed to update issue status:", error);
     }
