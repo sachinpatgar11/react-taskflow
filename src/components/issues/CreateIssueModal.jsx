@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createIssue } from "../../features/issues/issueSlice";
+import { createActivity } from "../../features/activities/activitySlice";
 import Modal from "../common/Modal";
 
 const initialFormData = {
@@ -85,13 +86,35 @@ const CreateIssueModal = ({ isOpen, onClose }) => {
     };
 
     try {
-      await dispatch(createIssue(issueData)).unwrap();
+      // 1. Create the issue
+      const createdIssue = await dispatch(createIssue(issueData)).unwrap();
 
+      // 2. Create an activity entry
+      const activityData = {
+        type: "issue_created",
+        message: "created a new issue",
+        entityName: createdIssue.title,
+        userId: "1",
+        projectId: createdIssue.projectId,
+        issueId: createdIssue.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Issue created, but activity could not be recorded:",
+          activityError,
+        );
+      }
+
+      // 3. Reset and close the modal
       setFormData(initialFormData);
       setErrors({});
       onClose();
     } catch {
-      // The Redux createError state displays the API error.
+      // The Redux createError state displays the issue creation error.
     }
   };
 
