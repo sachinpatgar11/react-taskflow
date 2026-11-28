@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../common/Modal";
 import { addProject } from "../../features/projects/projectSlice";
+import { createActivity } from "../../features/activities/activitySlice";
 
 const initialForm = {
   name: "",
@@ -82,13 +83,34 @@ function CreateProjectModal({ isOpen, onClose }) {
     };
 
     try {
-      await dispatch(addProject(newProject)).unwrap();
+      // 1. Create the project
+      const createdProject = await dispatch(addProject(newProject)).unwrap();
 
+      // 2. Create an activity entry
+      const activityData = {
+        type: "project_created",
+        message: "created a new project",
+        entityName: createdProject.name,
+        userId: "1",
+        projectId: createdProject.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Project created, but activity could not be recorded:",
+          activityError,
+        );
+      }
+
+      // 3. Reset and close the modal
       setForm(initialForm);
       setErrors({});
       onClose();
     } catch {
-      // The Redux slice stores the API error for display.
+      // The Redux slice stores the project creation error.
     }
   };
 
