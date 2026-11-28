@@ -10,6 +10,12 @@ import {
   Circle,
   Activity,
   CircleDot,
+  CirclePlus,
+  RefreshCw,
+  UserPlus,
+  FolderPlus,
+  Pencil,
+  FolderX,
 } from "lucide-react";
 import {
   PieChart,
@@ -48,6 +54,33 @@ import {
 
 import { fetchUsers } from "../features/users/userSlice";
 import { selectUsers } from "../features/users/userSelectors";
+
+const activityIconConfig = {
+  issue_created: {
+    icon: CirclePlus,
+    color: "issue-created",
+  },
+  status_changed: {
+    icon: RefreshCw,
+    color: "status-changed",
+  },
+  issue_assigned: {
+    icon: UserPlus,
+    color: "issue-assigned",
+  },
+  project_created: {
+    icon: FolderPlus,
+    color: "project-created",
+  },
+  project_updated: {
+    icon: Pencil,
+    color: "project-updated",
+  },
+  project_deleted: {
+    icon: FolderX,
+    color: "project-deleted",
+  },
+};
 
 // Normalize status values such as "In Progress" and "in-progress"
 const normalizeStatus = (status = "") =>
@@ -464,10 +497,27 @@ function Dashboard() {
                           ? `/projects/${linkedProject.id}`
                           : null;
 
+                      const activityConfig = activityIconConfig[
+                        activity.type
+                      ] || {
+                        icon: Activity,
+                        color: "default",
+                      };
+
+                      const ActivityIcon = activityConfig.icon;
+
                       return (
                         <article className="activity-item" key={activity.id}>
-                          <div className="activity-avatar">
-                            {user?.avatar || "?"}
+                          <div className="activity-avatar-wrapper">
+                            <div className="activity-avatar">
+                              {user?.avatar || "?"}
+                            </div>
+
+                            <div
+                              className={`activity-type-icon ${activityConfig.color}`}
+                            >
+                              <ActivityIcon size={14} />
+                            </div>
                           </div>
 
                           <div className="activity-content">

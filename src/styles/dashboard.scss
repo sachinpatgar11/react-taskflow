@@ -270,7 +270,8 @@
 }
 
 .activity-section {
-  margin-bottom: 38px;
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .activity-list {
@@ -361,4 +362,47 @@
     outline-offset: 3px;
     border-radius: 2px;
   }
+}
+.activity-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.activity-type-icon {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 23px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid $surface;
+  border-radius: 50%;
+  background: #64748b;
+  color: #fff;
+}
+
+.activity-type-icon.issue-created {
+  background: #3b82f6;
+}
+
+.activity-type-icon.status-changed {
+  background: #8b5cf6;
+}
+
+.activity-type-icon.issue-assigned {
+  background: #0d9488;
+}
+
+.activity-type-icon.project-created {
+  background: #16a34a;
+}
+
+.activity-type-icon.project-updated {
+  background: #d97706;
+}
+
+.activity-type-icon.project-deleted {
+  background: #dc2626;
 }
