@@ -1,5 +1,9 @@
 @use "./variables" as *;
 
+// ==========================================
+// Page Heading
+// ==========================================
+
 .page-heading {
   display: flex;
   align-items: center;
@@ -13,10 +17,14 @@
   }
 
   p {
-    color: $text-secondary;
     margin-bottom: 0;
+    color: $text-secondary;
   }
 }
+
+// ==========================================
+// Statistics Cards
+// ==========================================
 
 .stats-grid {
   display: grid;
@@ -46,9 +54,9 @@
 }
 
 .stat-icon {
+  display: grid;
   width: 39px;
   height: 39px;
-  display: grid;
   place-items: center;
   border-radius: 10px;
 
@@ -73,6 +81,10 @@
   }
 }
 
+// ==========================================
+// Section Headings
+// ==========================================
+
 .section-heading {
   display: flex;
   align-items: center;
@@ -80,16 +92,20 @@
   margin-bottom: 18px;
 
   h2 {
-    font-size: 18px;
     margin-bottom: 6px;
+    font-size: 18px;
   }
 
   p {
+    margin-bottom: 0;
     color: $text-secondary;
     font-size: 12px;
-    margin-bottom: 0;
   }
 }
+
+// ==========================================
+// Project Cards
+// ==========================================
 
 .project-grid {
   display: grid;
@@ -133,14 +149,14 @@
 }
 
 .project-color {
+  display: grid;
   width: 39px;
   height: 39px;
-  display: grid;
   place-items: center;
-  color: white;
   border-radius: 10px;
-  font-weight: 700;
+  color: white;
   font-size: 12px;
+  font-weight: 700;
 }
 
 .status {
@@ -185,55 +201,13 @@
   border-radius: inherit;
 }
 
-.coming-soon {
-  padding: 55px 20px;
-  background: white;
-  border: 1px dashed $border;
-  border-radius: $radius-lg;
-  text-align: center;
-
-  p {
-    color: $text-secondary;
-  }
-}
-
-.not-found {
-  text-align: center;
-  padding: 80px 20px;
-
-  h1 {
-    font-size: 64px;
-    color: $primary;
-  }
-
-  a {
-    display: inline-block;
-    margin-top: 15px;
-    color: $primary;
-    font-weight: 600;
-  }
-}
-
-@media (max-width: 1100px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .project-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .stats-grid,
-  .project-grid {
-    grid-template-columns: 1fr;
-  }
-}
+// ==========================================
+// Dashboard Charts
+// ==========================================
 
 .dashboard-charts {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   margin-bottom: 38px;
 }
@@ -247,27 +221,16 @@
   box-shadow: $shadow-card;
 }
 
-.status-chart {
-  width: 100%;
-  height: 300px;
-  margin-top: 10px;
-}
-
-.dashboard-charts {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
+.status-chart,
 .priority-chart {
   width: 100%;
   height: 300px;
   margin-top: 10px;
 }
 
-@media (max-width: 900px) {
-  .dashboard-charts {
-    grid-template-columns: 1fr;
-  }
-}
+// ==========================================
+// Recent Activity
+// ==========================================
 
 .activity-section {
   margin-top: 2rem;
@@ -275,11 +238,11 @@
 }
 
 .activity-list {
+  overflow: hidden;
   background: $surface;
   border: 1px solid $border;
   border-radius: $radius-md;
   box-shadow: $shadow-card;
-  overflow: hidden;
 }
 
 .activity-item {
@@ -294,17 +257,61 @@
   }
 }
 
+.activity-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .activity-avatar {
+  display: grid;
   width: 40px;
   height: 40px;
   flex-shrink: 0;
-  display: grid;
   place-items: center;
   border-radius: 50%;
   background: #eef2ff;
   color: #4f46e5;
   font-size: 13px;
   font-weight: 600;
+}
+
+.activity-type-icon {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  display: flex;
+  width: 23px;
+  height: 23px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid $surface;
+  border-radius: 50%;
+  background: #64748b;
+  color: #fff;
+
+  &.issue-created {
+    background: #3b82f6;
+  }
+
+  &.status-changed {
+    background: #8b5cf6;
+  }
+
+  &.issue-assigned {
+    background: #0d9488;
+  }
+
+  &.project-created {
+    background: #16a34a;
+  }
+
+  &.project-updated {
+    background: #d97706;
+  }
+
+  &.project-deleted {
+    background: #dc2626;
+  }
 }
 
 .activity-content {
@@ -328,24 +335,6 @@
   font-size: 13px;
 }
 
-.activity-time {
-  flex-shrink: 0;
-  color: $text-secondary;
-  font-size: 12px;
-}
-
-@media (max-width: 600px) {
-  .activity-item {
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px;
-  }
-
-  .activity-time {
-    font-size: 11px;
-  }
-}
-
 .activity-entity-link {
   display: inline-block;
   text-decoration: none;
@@ -363,46 +352,79 @@
     border-radius: 2px;
   }
 }
-.activity-avatar-wrapper {
-  position: relative;
+
+.activity-time {
   flex-shrink: 0;
+  color: $text-secondary;
+  font-size: 12px;
 }
 
-.activity-type-icon {
-  position: absolute;
-  right: -5px;
-  bottom: -5px;
-  width: 23px;
-  height: 23px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid $surface;
-  border-radius: 50%;
-  background: #64748b;
-  color: #fff;
+// ==========================================
+// Empty & Error States
+// ==========================================
+
+.coming-soon {
+  padding: 55px 20px;
+  background: white;
+  border: 1px dashed $border;
+  border-radius: $radius-lg;
+  text-align: center;
+
+  p {
+    color: $text-secondary;
+  }
 }
 
-.activity-type-icon.issue-created {
-  background: #3b82f6;
+.not-found {
+  padding: 80px 20px;
+  text-align: center;
+
+  h1 {
+    color: $primary;
+    font-size: 64px;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 15px;
+    color: $primary;
+    font-weight: 600;
+  }
 }
 
-.activity-type-icon.status-changed {
-  background: #8b5cf6;
+// ==========================================
+// Responsive Styles
+// ==========================================
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.activity-type-icon.issue-assigned {
-  background: #0d9488;
+@media (max-width: 900px) {
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
 }
 
-.activity-type-icon.project-created {
-  background: #16a34a;
-}
+@media (max-width: 600px) {
+  .stats-grid,
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
 
-.activity-type-icon.project-updated {
-  background: #d97706;
-}
+  .activity-item {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
 
-.activity-type-icon.project-deleted {
-  background: #dc2626;
+  .activity-time {
+    font-size: 11px;
+  }
 }

@@ -1,20 +1,21 @@
 .issue-details-page {
-  padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 24px;
 
+  // Back Navigation
   .back-button {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 20px;
+    padding: 8px 0;
     border: none;
     background: transparent;
     color: #64748b;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    padding: 8px 0;
-    margin-bottom: 20px;
     transition: color 0.2s ease;
 
     &:hover {
@@ -22,19 +23,20 @@
     }
   }
 
+  // Header
   .issue-details-header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
+    justify-content: space-between;
     gap: 20px;
     margin-bottom: 28px;
 
     h1 {
+      margin: 8px 0;
       color: #1e293b;
       font-size: 28px;
       font-weight: 700;
       line-height: 1.3;
-      margin: 8px 0;
       overflow-wrap: anywhere;
     }
   }
@@ -50,8 +52,8 @@
 
   .issue-details-actions {
     display: flex;
-    gap: 10px;
     flex-shrink: 0;
+    gap: 10px;
 
     button {
       display: inline-flex;
@@ -76,44 +78,47 @@
     }
   }
 
+  // Main Layout
   .issue-details-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 24px;
     align-items: start;
+    gap: 24px;
   }
 
   .issue-details-main,
   .issue-details-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     min-width: 0;
+    gap: 20px;
   }
 
+  // Cards
   .issue-details-card {
+    padding: 22px;
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 22px;
 
     h2 {
+      margin: 0 0 16px;
       color: #1e293b;
       font-size: 16px;
       font-weight: 650;
-      margin: 0 0 16px;
     }
   }
 
   .issue-details-description {
+    margin: 0;
     color: #64748b;
     font-size: 14px;
     line-height: 1.8;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-    margin: 0;
   }
 
+  // Detail Rows
   .issue-detail-row {
     display: flex;
     flex-direction: column;
@@ -126,8 +131,31 @@
     }
 
     &:last-child {
-      border-bottom: none;
       padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    select {
+      width: 140px;
+      max-width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      outline: none;
+      background: #fff;
+      color: #334155;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #cbd5e1;
+      }
+
+      &:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+      }
     }
   }
 
@@ -146,6 +174,7 @@
     }
   }
 
+  // Loading, Error & Empty States
   .issue-details-loading,
   .issue-details-error,
   .issue-details-empty {
@@ -155,19 +184,19 @@
     justify-content: center;
     min-height: 300px;
     padding: 30px;
-    text-align: center;
     color: #64748b;
+    text-align: center;
 
     h2 {
-      color: #1e293b;
       margin: 12px 0 6px;
+      color: #1e293b;
       font-size: 20px;
     }
 
     p {
+      margin: 0;
       font-size: 14px;
       line-height: 1.6;
-      margin: 0;
     }
   }
 
@@ -176,10 +205,15 @@
   }
 }
 
+// Status & Priority
 .issue-priority,
 .issue-status {
   width: fit-content;
 }
+
+// ==========================================
+// Responsive Styles
+// ==========================================
 
 @media (max-width: 900px) {
   .issue-details-page {
@@ -207,10 +241,8 @@
       }
     }
 
-    .issue-details-actions {
-      button {
-        flex: 1;
-      }
+    .issue-details-actions button {
+      flex: 1;
     }
 
     .issue-details-card {
@@ -219,31 +251,6 @@
 
     .issue-details-sidebar {
       grid-template-columns: 1fr;
-    }
-  }
-}
-
-.issue-detail-row {
-  select {
-    width: 140px;
-    max-width: 100%;
-    padding: 9px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #fff;
-    color: #334155;
-    font-size: 13px;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: #cbd5e1;
-    }
-
-    &:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
     }
   }
 }
