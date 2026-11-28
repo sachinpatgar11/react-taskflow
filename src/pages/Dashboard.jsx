@@ -441,6 +441,28 @@ function Dashboard() {
                       const user = users.find(
                         (item) => String(item.id) === String(activity.userId),
                       );
+                      const linkedIssue = activity.issueId
+                        ? issues.find(
+                            (issue) =>
+                              String(issue.id) === String(activity.issueId),
+                          )
+                        : null;
+
+                      const linkedProject = activity.projectId
+                        ? projects.find(
+                            (project) =>
+                              String(project.id) === String(activity.projectId),
+                          )
+                        : null;
+
+                      // Prefer the issue link when the activity belongs to an issue.
+                      const entityRoute = activity.issueId
+                        ? linkedIssue
+                          ? `/issues/${linkedIssue.id}`
+                          : null
+                        : linkedProject
+                          ? `/projects/${linkedProject.id}`
+                          : null;
 
                       return (
                         <article className="activity-item" key={activity.id}>
@@ -454,9 +476,19 @@ function Dashboard() {
                               {activity.message}
                             </p>
 
-                            <span className="activity-entity">
-                              {activity.entityName}
-                            </span>
+                            {entityRoute ? (
+                              <Link
+                                to={entityRoute}
+                                className="activity-entity activity-entity-link"
+                                aria-label={`View details for ${activity.entityName}`}
+                              >
+                                {activity.entityName}
+                              </Link>
+                            ) : (
+                              <span className="activity-entity">
+                                {activity.entityName}
+                              </span>
+                            )}
                           </div>
 
                           <time

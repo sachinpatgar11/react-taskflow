@@ -344,3 +344,21 @@
     font-size: 11px;
   }
 }
+
+.activity-entity-link {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
