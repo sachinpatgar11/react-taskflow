@@ -3,6 +3,7 @@ import { AlertTriangle, Trash2 } from "lucide-react";
 
 import Modal from "../common/Modal";
 import { deleteProject } from "../../features/projects/projectSlice";
+import { createActivity } from "../../features/activities/activitySlice";
 
 function DeleteProjectModal({ isOpen, onClose, project }) {
   const dispatch = useDispatch();
@@ -19,7 +20,35 @@ function DeleteProjectModal({ isOpen, onClose, project }) {
 
   const handleDelete = async () => {
     try {
+      // Capture project details before deletion
+      const deletedProject = {
+        id: project.id,
+        name: project.name,
+      };
+
+      // 1. Delete the project
       await dispatch(deleteProject(project.id)).unwrap();
+
+      // 2. Record the deletion activity
+      const activityData = {
+        type: "project_deleted",
+        message: "deleted a project",
+        entityName: deletedProject.name,
+        userId: "1",
+        projectId: deletedProject.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Project deleted, but activity could not be recorded:",
+          activityError,
+        );
+      }
+
+      // 3. Close the modal
       onClose();
     } catch {
       // Redux stores the API error for display.
