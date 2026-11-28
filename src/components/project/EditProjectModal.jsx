@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../common/Modal";
 import { updateProject } from "../../features/projects/projectSlice";
+import { createActivity } from "../../features/activities/activitySlice";
 
 function EditProjectModal({ isOpen, onClose, project }) {
   const dispatch = useDispatch();
@@ -94,16 +95,37 @@ function EditProjectModal({ isOpen, onClose, project }) {
     };
 
     try {
-      await dispatch(
+      // 1. Update the project
+      const updatedProject = await dispatch(
         updateProject({
           id: project.id,
           updates,
         }),
       ).unwrap();
 
+      // 2. Record the project update activity
+      const activityData = {
+        type: "project_updated",
+        message: "updated project details",
+        entityName: updatedProject.name,
+        userId: "1",
+        projectId: updatedProject.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await dispatch(createActivity(activityData)).unwrap();
+      } catch (activityError) {
+        console.error(
+          "Project updated, but activity could not be recorded:",
+          activityError,
+        );
+      }
+
+      // 3. Close the modal
       onClose();
     } catch {
-      // Redux stores the API error for display.
+      // Redux stores the project update error for display.
     }
   };
 
